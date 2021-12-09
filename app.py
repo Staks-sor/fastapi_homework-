@@ -1,20 +1,22 @@
-from typing import Optional
+from fastapi import FastAPI, Request
+from fastapi.responses import HTMLResponse
+from fastapi.staticfiles import StaticFiles
+from fastapi.templating import Jinja2Templates
 import uvicorn
-from fastapi import FastAPI
 
 app = FastAPI()
 
-
-@app.get("/")
-def read_root():
-    return {"Hello": "World"}
+app.mount("/static", StaticFiles(directory="static"), name="static")
 
 
-@app.get("/items/{item_id}")
-def read_item(item_id: int, q: Optional[str] = None):
-    return {"item_id": item_id, "q": q}
+templates = Jinja2Templates(directory="templates")
+
+
+@app.get("/items/{id}", response_class=HTMLResponse)
+async def read_item(request: Request, id: str):
+    return templates.TemplateResponse("index.html", {"request": request, "id": id})
 
 
 
 if __name__ == '__main__':
-    uvicorn.run(app)
+    uvicorn.run(app, host='127.0.0.1', port=8000, )
