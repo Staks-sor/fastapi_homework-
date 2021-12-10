@@ -4,7 +4,6 @@ import uvicorn
 from pymongo import MongoClient
 client = MongoClient('mongodb://localhost:27017')
 
-
 db = client.personwork
 
 
@@ -14,10 +13,10 @@ html = """
 <!DOCTYPE html>
 <html>
     <head>
-        <title>Задание</title>
+        <title>person work</title>
     </head>
     <body>
-        <h1>Сообщения</h1>
+        <h1>Введите имя работника</h1>
         <form action="" onsubmit="sendMessage(event)">
             <input type="text" id="messageText" autocomplete="off"/>
             <button>Отправить</button>
@@ -55,7 +54,9 @@ async def websocket_endpoint(websocket: WebSocket):
     while True:
         data = await websocket.receive_text()
         await websocket.send_text(f"{data}")
-        bills_post = db.person.find_one({'name': data})
-        await websocket.send_text(f"{bills_post}")
+
+        name_person = db.person.find_one({'name': data})
+
+        await websocket.send_text(f"{name_person}")
 if __name__ == '__main__':
     uvicorn.run(app)
