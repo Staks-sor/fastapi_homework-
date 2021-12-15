@@ -2,10 +2,11 @@ from fastapi import FastAPI, WebSocket
 from fastapi.responses import HTMLResponse
 import uvicorn
 from pymongo import MongoClient
+import datetime
 client = MongoClient('mongodb://localhost:27017')
 
 db = client.personwork
-
+collection = db['person']
 
 app = FastAPI()
 
@@ -55,8 +56,33 @@ async def websocket_endpoint(websocket: WebSocket):
         data = await websocket.receive_text()
         await websocket.send_text(f"{data}")
 
-        name_person = db.person.find_one({'name': data})
+        if len(data) == 2:
+            print('age-person')
+            age = collection.find_one({'age': int(data)})
+            await websocket.send_text(f"{age}")
 
-        await websocket.send_text(f"{name_person}")
+        elif data.find("@") != data.find("@"):
+            print("name")
+            name = collection.find_one({'name': data})
+            await websocket.send_text(f"{name}")
+
+        elif data == datetime.datetime():
+            print('data')
+            company = collection.find_one({'join_date': data})
+            await websocket.send_text(f"{company}")
+
+
+
+        elif data == str(data):
+            print('company')
+            company = collection.find_one({'company': data})
+            await websocket.send_text(f"{company}")
+
+
+
+        else:
+            print('Ты дебил')
+
 if __name__ == '__main__':
     uvicorn.run(app)
+
